@@ -2,18 +2,30 @@ import { Router } from "express";
 import User from "../../dbmodels/user.js";
 import sessionIdModel from "../../dbmodels/sessionId.js";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
+
+async function verifyPassword(password, hash) {
+    const match = await bcrypt.compare(password, hash);
+    return match; // true if password matches
+}
 
 const router = Router();
 
-router.post('/', (req, res) => {
-    const { email, password } = req.body;
+router.post('/', async (req, res) => {
+    const { username, password } = req.body;
+
     User.findOne({
-        email: email,
-        password: password
-    })
-    .then(user => {
+        username,
+    }).select('+password')
+    .then(async user => {
         if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials.' });
+            return res.status(401).json({ message: 'Invalid username.' });
+        }
+        console.log(user, password);
+        let passwordCorrect = await verifyPassword(password, user.password);
+
+        if (!(passwordCorrect === true)) {
+            return res.status(401).json({ message: 'Invalid password.' });
         }
 
         const sessionId = crypto.randomUUID().toString();

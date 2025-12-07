@@ -11,7 +11,7 @@ export default async function (sessionId) {
                 return reject(new Error('Invalid sessionId.'));
             }
 
-            User.findById(session.user)
+            User.findById(session.user).select('+email')
             .then(user => {
                 if (!user) {
                     return reject(new Error('User not found.'));
