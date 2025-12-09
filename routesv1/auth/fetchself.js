@@ -4,7 +4,7 @@ import getUser from "../../utils/getUser.js";
 const router = Router();
 
 router.get('/', (req, res) => {
-    const { sessionId } = req.query;
+    const { sessionId } = req.cookies;
     getUser(sessionId)
     .then(user => {
         res.status(200).json({ roles: user.roles, username: user.username, displayName: user.displayName, email: user.email });

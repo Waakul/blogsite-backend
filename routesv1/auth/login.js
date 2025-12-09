@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: 'Invalid username.' });
         }
-        console.log(user, password);
         let passwordCorrect = await verifyPassword(password, user.password);
 
         if (!(passwordCorrect === true)) {

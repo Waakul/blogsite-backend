@@ -69,6 +69,11 @@ router.post('/verify', (req, res) => {
 
 router.post('/reset', (req, res) => {
     const {resetToken, newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6 || newPassword.length > 100) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters long and less than 100 characters.' });
+    }
+
     resetTokenModel.findOne({ resetToken: resetToken })
     .then(async tokenDoc => {
         if (!tokenDoc) {

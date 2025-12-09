@@ -14,6 +14,14 @@ const router = Router();
 router.post('/user', (req, res) => {
     const { username, email } = req.body;
 
+    if (!username || !email) {
+        return res.status(400).json({ message: 'Username and email are required.' });
+    }
+
+    if (username.length < 3 || username.length > 30) {
+        return res.status(400).json({ message: 'Username must be between 3 and 30 characters.' });
+    }
+
     User.findOne({
         username: username,
     })
@@ -37,6 +45,18 @@ router.post('/user', (req, res) => {
 
 router.post('/user/verify-otp', (req, res) => {
     const { email, username, displayName, password, otpCode } = req.body;
+
+    if (!username || !email) {
+        return res.status(400).json({ message: 'Username and email are required.' });
+    }
+
+    if (username.length < 3 || username.length > 30) {
+        return res.status(400).json({ message: 'Username must be between 3 and 30 characters.' });
+    }
+
+    if (!password || password.length < 6 || password.length > 100) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters long and less than 100 characters.' });
+    }
 
     User.findOne({
         username: username,
