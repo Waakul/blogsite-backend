@@ -65,27 +65,27 @@ router.get('/', async (req, res) => {
         // Step 2: sort by count descending
         entries.sort((a, b) => b[1] - a[1]);
 
-        // Step 3: take top 10 IDs
+        // Step 3: take top 10 IDs (in correct order)
         const top10Ids = entries.slice(0, 10).map(([id]) => id);
 
-        // Step 4: query only username + displayName for those IDs
+        // Step 4: query users (MongoDB returns random order)
         const topUsers = await User.find({ _id: { $in: top10Ids } })
             .select('username displayName')
             .lean();
 
-        // Step 5: return just username + displayName
-        const topUsersResult = topUsers.map(u => ({
-            username: u.username,
-            displayName: u.displayName
-        }));
+        // Step 5: reorder based on follower count order
+        const orderedTopUsers = top10Ids.map(id =>
+            topUsers.find(u => u._id.toString() === id)
+        ).filter(Boolean);
 
         res.json({
             success: true,
             page,
             hasMore: end < allPosts.length,
             posts: paginatedPosts,
-            trendingUsers: topUsersResult,
+            trendingUsers: orderedTopUsers,
         });
+
 
     } catch (err) {
         console.error(err);
