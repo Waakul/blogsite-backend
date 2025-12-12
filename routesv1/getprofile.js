@@ -17,38 +17,39 @@ router.get("/:username", (req, res) => {
 
         User.countDocuments({following: user._id})
         .then(followerCount => {
-            Post.find({user: user._id})
+            Post.find({ user: user._id })
+            .sort({ dateofcreation: -1 }) // -1 means descending order
             .then(posts => {
                 getUser(sessionId)
-                .then(requestingUser => {
-                    res.json({
-                        username: user.username,
-                        displayName: user.displayName,
-                        following: user.following.length,
-                        followers: followerCount,
-                        posts: posts.map(post => ({
-                            author: user.username,
-                            authorDisplayName: user.displayName,
-                            content: post.content.toString(),
-                            createdAt: post.dateofcreation,
-                        })),
-                        isFollowing: requestingUser ? requestingUser.following.includes(user._id) : false,
+                    .then(requestingUser => {
+                        res.json({
+                            username: user.username,
+                            displayName: user.displayName,
+                            following: user.following.length,
+                            followers: followerCount,
+                            posts: posts.map(post => ({
+                                author: user.username,
+                                authorDisplayName: user.displayName,
+                                content: post.content.toString(),
+                                createdAt: post.dateofcreation,
+                            })),
+                            isFollowing: requestingUser ? requestingUser.following.includes(user._id) : false,
+                        });
+                    })
+                    .catch(err => {
+                        res.json({
+                            username: user.username,
+                            displayName: user.displayName,
+                            following: user.following.length,
+                            followers: followerCount,
+                            posts: posts.map(post => ({
+                                author: user.username,
+                                authorDisplayName: user.displayName,
+                                content: post.content.toString(),
+                                createdAt: post.dateofcreation,
+                            })),
+                        });
                     });
-                })
-                .catch(err => {
-                    res.json({
-                        username: user.username,
-                        displayName: user.displayName,
-                        following: user.following.length,
-                        followers: followerCount,
-                        posts: posts.map(post => ({
-                            author: user.username,
-                            authorDisplayName: user.displayName,
-                            content: post.content.toString(),
-                            createdAt: post.dateofcreation,
-                        })),
-                    });
-                });
             })
             .catch(err => {
                 console.error(err);
