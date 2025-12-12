@@ -4,7 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "pm2 start index.js --name BlogIt-Backend",
+    "update": "git pull && npm install && npm run start"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +20,7 @@
     "express": "^5.1.0",
     "mongoose": "^9.0.0",
     "nodemailer": "^7.0.11",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "pm2": "^6.0.14"
   }
 }
