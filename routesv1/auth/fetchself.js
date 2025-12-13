@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
         res.status(200).json({ roles: user.roles, username: user.username, displayName: user.displayName, email: user.email, following: populatedUser.following, followers: followers });
     })
     .catch(err => {
+        console.log('fetch self: err invalid session ' + err)
         res.status(401).json({ message: 'Invalid session.', error: err });
     });
 });
